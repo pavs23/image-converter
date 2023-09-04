@@ -1,0 +1,5 @@
+streamlit
+python-dotenv
+torch
+diffusers[torch]
+transformers
