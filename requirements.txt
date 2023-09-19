@@ -3,3 +3,4 @@ python-dotenv
 torch
 diffusers[torch]
 transformers
+streamlit-camera-input-live
