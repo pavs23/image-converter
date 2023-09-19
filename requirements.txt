@@ -4,3 +4,4 @@ torch
 diffusers[torch]
 transformers
 streamlit-camera-input-live
+watchdog

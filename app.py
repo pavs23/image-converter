@@ -10,17 +10,20 @@ st.set_page_config(layout="wide")
 class ImageConverter:
     def __init__(self, model_id="timbrooks/instruct-pix2pix"):
         self.pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(model_id, safety_checker=None)
-        self.pipe.to("cpu")
+        self.pipe.to("mps")
+        self.pipe.enable_attention_slicing()
         self.pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(self.pipe.scheduler.config)
         
     def convert(self, prompt, original_image):
-        image = PIL.Image.open(original_image)
-        image = image.resize((352, 626))
-        image = PIL.ImageOps.exif_transpose(image)
-        image = image.convert("RGB")
-        
-        converted_images = self.pipe(prompt, image=image, num_inference_steps=10, image_guidance_scale=1).images
-        return converted_images[0]
+        if not original_image:
+            st.error("Click 'Take Photo' and wait for it to load before trying the image generation options")
+            return
+        with PIL.Image.open(original_image) as image:
+            st.error(f"image size is {image.size}")
+            # image = PIL.ImageOps.exif_transpose(image) #this seems silly, are we rotating the laptop then wanting to reorient?
+            image = image.convert("RGB")
+            converted_images = self.pipe(prompt, image=image, num_inference_steps=10, image_guidance_scale=1).images
+            return converted_images[0]
 
 class App:
     def __init__(self):
@@ -54,7 +57,8 @@ class App:
         for option in options:
             if col2.button(option):
                 converted_image = self.image_converter.convert(f"Convert the image to a {option}", st.session_state.original_image)
-                col3.image(converted_image)
+                if converted_image:
+                    col3.image(converted_image)
         st.session_state.original_image = col1.camera_input("Take a photo",label_visibility="hidden")
         
 if __name__ == "__main__":
