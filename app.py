@@ -14,6 +14,9 @@ class ImageConverter:
         self.pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(self.pipe.scheduler.config)
         
     def convert(self, prompt, original_image):
+        if not original_image:
+            st.error("Click 'Take Photo' and wait for it to load before trying the image generation options")
+            return
         image = PIL.Image.open(original_image)
         image = image.resize((352, 626))
         image = PIL.ImageOps.exif_transpose(image)
@@ -54,7 +57,8 @@ class App:
         for option in options:
             if col2.button(option):
                 converted_image = self.image_converter.convert(f"Convert the image to a {option}", st.session_state.original_image)
-                col3.image(converted_image)
+                if converted_image:
+                    col3.image(converted_image)
         st.session_state.original_image = col1.camera_input("Take a photo",label_visibility="hidden")
         
 if __name__ == "__main__":
