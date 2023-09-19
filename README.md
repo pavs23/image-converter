@@ -1,6 +1,14 @@
 # Introduction
 A simple streamlit application to capture and convert image using laptop camera.
 
+## Launch
+As per usual with streamlit
+
+```sh
+streamlit run app.py
+```
+
+
 ## Setup
 Make sure you have a .env file with the following keys
 
