@@ -17,13 +17,12 @@ class ImageConverter:
         if not original_image:
             st.error("Click 'Take Photo' and wait for it to load before trying the image generation options")
             return
-        image = PIL.Image.open(original_image)
-        image = image.resize((352, 626))
-        image = PIL.ImageOps.exif_transpose(image)
-        image = image.convert("RGB")
-        
-        converted_images = self.pipe(prompt, image=image, num_inference_steps=10, image_guidance_scale=1).images
-        return converted_images[0]
+        with PIL.Image.open(original_image) as image:
+            st.error(f"image size is {image.size}")
+            # image = PIL.ImageOps.exif_transpose(image) #this seems silly, are we rotating the laptop then wanting to reorient?
+            image = image.convert("RGB")
+            converted_images = self.pipe(prompt, image=image, num_inference_steps=10, image_guidance_scale=1).images
+            return converted_images[0]
 
 class App:
     def __init__(self):
