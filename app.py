@@ -10,7 +10,8 @@ st.set_page_config(layout="wide")
 class ImageConverter:
     def __init__(self, model_id="timbrooks/instruct-pix2pix"):
         self.pipe = StableDiffusionInstructPix2PixPipeline.from_pretrained(model_id, safety_checker=None)
-        self.pipe.to("cpu")
+        self.pipe.to("mps")
+        self.pipe.enable_attention_slicing()
         self.pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(self.pipe.scheduler.config)
         
     def convert(self, prompt, original_image):
